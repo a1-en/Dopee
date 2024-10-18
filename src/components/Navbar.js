@@ -163,12 +163,7 @@ const Navbar = () => {
         <ListItem button onClick={() => navigate('/shop')}>
           <ListItemText primary="Shop" />
         </ListItem>
-        <ListItem button onClick={() => navigate('/men')}>
-          <ListItemText primary="Men" />
-        </ListItem>
-        <ListItem button onClick={() => navigate('/women')}>
-          <ListItemText primary="Women" />
-        </ListItem>
+    
       </List>
     </Box>
   );
@@ -191,7 +186,7 @@ const Navbar = () => {
           </Typography>
         )}
         {!isMobile && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}>
             <Button color="inherit" onClick={() => navigate('/')}>
               Home
             </Button>
