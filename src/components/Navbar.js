@@ -19,6 +19,7 @@ import {
   CardContent,
   Grid,
   Modal,
+  TextField,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -98,14 +99,16 @@ const useDebounce = (value, delay) => {
 // Navbar component
 const Navbar = () => {
   const navigate = useNavigate();
-  const { cart, addToCart } = useCart(); // Get cart and addToCart function from context
+  const { cart, addToCart } = useCart();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null); // Store the selected product for modal
-  const [modalOpen, setModalOpen] = useState(false); // Modal state
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
 
   // Debounce the search query
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -115,22 +118,17 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    console.log('Debounced Search Query:', debouncedSearchQuery); // Log the debounced search query
-
     if (debouncedSearchQuery) {
       fetch(`https://dummyjson.com/products/search?q=${debouncedSearchQuery}`)
         .then((res) => res.json())
         .then((data) => {
-          console.log('Search Results:', data.products); // Log the fetched results
           setSearchResults(data.products);
         })
         .catch((err) => console.error('Fetch error:', err));
     } else {
-      // Clear search results and modal when the search query is empty
       setSearchResults([]);
-      setSelectedProduct(null); // Clear selected product
-      setModalOpen(false); // Close modal
-      console.log('Search Results cleared'); // Log when results are cleared
+      setSelectedProduct(null);
+      setModalOpen(false);
     }
   }, [debouncedSearchQuery]);
 
@@ -140,18 +138,29 @@ const Navbar = () => {
 
   const handleProductClick = (product) => {
     setSelectedProduct(product);
-    setModalOpen(true); // Open modal when product is clicked
-    console.log('Selected Product:', product); // Log the selected product
+    setModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setModalOpen(false);
-    setSelectedProduct(null); // Clear selected product
+    setSelectedProduct(null);
   };
 
   const handleAddToCart = () => {
-    addToCart(selectedProduct); // Add selected product to cart
-    handleCloseModal(); // Close modal after adding
+    addToCart(selectedProduct);
+    handleCloseModal();
+  };
+
+  const handleContactFormChange = (event) => {
+    const { name, value } = event.target;
+    setContactForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleContactSubmit = (event) => {
+    event.preventDefault();
+    console.log('Contact Form Submitted:', contactForm);
+    setContactForm({ name: '', email: '', message: '' });
+    setContactModalOpen(false);
   };
 
   const drawerContent = (
@@ -163,7 +172,9 @@ const Navbar = () => {
         <ListItem button onClick={() => navigate('/shop')}>
           <ListItemText primary="Shop" />
         </ListItem>
-    
+        <ListItem button onClick={() => setContactModalOpen(true)}>
+          <ListItemText primary="Contact Us" />
+        </ListItem>
       </List>
     </Box>
   );
@@ -187,6 +198,9 @@ const Navbar = () => {
         )}
         {!isMobile && (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}>
+            <Button color="inherit" onClick={() => setContactModalOpen(true)}>
+              Contact Us
+            </Button>
             <Button color="inherit" onClick={() => navigate('/')}>
               Home
             </Button>
@@ -240,10 +254,7 @@ const Navbar = () => {
       )}
 
       {/* Modal for product details */}
-      <Modal
-        open={modalOpen}
-        onClose={handleCloseModal}
-      >
+      <Modal open={modalOpen} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
           {selectedProduct && (
             <>
@@ -258,12 +269,50 @@ const Navbar = () => {
               <Typography variant="body2" color="textSecondary">Price: ${selectedProduct.price}</Typography>
               <Typography variant="body2" color="textSecondary">Discount: {selectedProduct.discountPercentage}%</Typography>
               <Typography variant="body2" color="textSecondary">Rating: {selectedProduct.rating}</Typography>
-              <Typography variant="body2" color="textSecondary">Dimensions: {`W: ${selectedProduct.dimensions.width}, H: ${selectedProduct.dimensions.height}, D: ${selectedProduct.dimensions.depth}`}</Typography>
-              <Button style={{ backgroundColor: "#e27604" }} onClick={handleAddToCart} variant="contained" sx={{ mt: 2 }}>
-                Add to Cart
-              </Button>
+              <Typography variant="body2" color="textSecondary">Description: {selectedProduct.description}</Typography>
+              <Button variant="contained" onClick={handleAddToCart}>Add to Cart</Button>
             </>
           )}
+        </Box>
+      </Modal>
+
+      {/* Modal for contact form */}
+      <Modal open={contactModalOpen} onClose={() => setContactModalOpen(false)}>
+        <Box sx={modalStyle}>
+          <Typography variant="h6">Contact Us</Typography>
+          <form onSubmit={handleContactSubmit}>
+            <TextField
+              label="Name"
+              name="name"
+              value={contactForm.name}
+              onChange={handleContactFormChange}
+              fullWidth
+              required
+              margin="normal"
+            />
+            <TextField
+              label="Email"
+              name="email"
+              value={contactForm.email}
+              onChange={handleContactFormChange}
+              type="email"
+              fullWidth
+              required
+              margin="normal"
+            />
+            <TextField
+              label="Message"
+              name="message"
+              value={contactForm.message}
+              onChange={handleContactFormChange}
+              multiline
+              rows={4}
+              fullWidth
+              required
+              margin="normal"
+            />
+            <Button type="submit" variant="contained" color="primary">Send</Button>
+          </form>
         </Box>
       </Modal>
     </AppBar>

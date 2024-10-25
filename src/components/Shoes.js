@@ -7,7 +7,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: '16px', // Rounded corners
   boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)', // Soft shadow
   transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-  maxWidth: 400, // Set a max width for the card
+  maxWidth: 500, // Set a max width for the card
   margin: 'auto', // Center the card horizontally
   display: 'flex', // Use flex to control the layout
   flexDirection: 'column', // Column layout
@@ -76,19 +76,18 @@ const Shoes = () => {
       </Typography>
       <Grid container spacing={4} justifyContent="center">
         {products.map((product) => (
-          <Grid item key={product.id} xs={6} sm={3} md={3}>
+          <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}> {/* Responsive grid item sizes */}
             <StyledCard>
-              <CardActionArea sx={{ flexGrow: 1 }} onClick={() => openModal(product)}> {/* Open modal on card click */}
+              <CardActionArea sx={{ flexGrow: 1 }} onClick={() => openModal(product)}>
                 <CardMedia
                   component="img"
                   image={product.thumbnail}
                   alt={product.title}
                   sx={{
-                    height: 170,               // Set the desired height
-                    width: 100,                // Set the desired width for the image
+                    height: 170, // Set the desired height
+                    width: '100%', // Make width 100% to fit the card
                     borderRadius: '16px 16px 0 0',
-                    objectFit: 'cover',        // Maintain aspect ratio
-                    margin: '0 auto',          // Center the image horizontally
+                    objectFit: 'cover', // Maintain aspect ratio
                   }}
                 />
                 <CardContent sx={{ padding: 2, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
@@ -144,16 +143,16 @@ const Shoes = () => {
 
       {/* Product Modal */}
       <Modal open={modalOpen} onClose={closeModal}>
-        <Box sx={{ 
-          position: 'absolute', 
-          top: '50%', 
-          left: '50%', 
-          transform: 'translate(-50%, -50%)', 
-          width: 400, 
-          bgcolor: 'background.paper', 
-          borderRadius: '16px', 
-          boxShadow: 24, 
-          p: 4 
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: { xs: '90%', sm: 400 }, // Responsive width for modal
+          bgcolor: 'background.paper',
+          borderRadius: '16px',
+          boxShadow: 24,
+          p: 4,
         }}>
           {selectedProduct && (
             <>

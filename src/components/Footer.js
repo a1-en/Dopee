@@ -16,12 +16,11 @@ const Footer = () => {
         marginTop: 'auto', // Push the footer to the bottom
       }}
     >
-      <Grid container alignItems="center">
-        <Grid item xs={4} sx={{ textAlign: 'left' }}>
-          <Typography variant="h6">
-Dopee          </Typography>
+      <Grid container alignItems="center" spacing={2}>
+        <Grid item xs={12} sm={4} sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+          <Typography variant="h6">Dopee</Typography>
         </Grid>
-        <Grid item xs={4} sx={{ textAlign: 'center' }}>
+        <Grid item xs={12} sm={4} sx={{ textAlign: 'center' }}>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <IconButton color="inherit" component={Link} href="/" target="_blank">
               <FacebookIcon />
@@ -37,16 +36,12 @@ Dopee          </Typography>
             </IconButton>
           </Box>
         </Grid>
-        <Grid item xs={4} sx={{ textAlign: 'right' }}>
+        <Grid item xs={12} sm={4} sx={{ textAlign: { xs: 'center', sm: 'right' } }}>
           <Typography variant="body2">
             &copy; {new Date().getFullYear()} Your Company. All rights reserved.
           </Typography>
-          <Typography variant="body2">
-            1234 Street Address, City, Country
-          </Typography>
-          <Typography variant="body2">
-            info@yourcompany.com | (123) 456-7890
-          </Typography>
+          <Typography variant="body2">1234 Street Address, City, Country</Typography>
+          <Typography variant="body2">info@yourcompany.com | (123) 456-7890</Typography>
         </Grid>
       </Grid>
     </Box>
