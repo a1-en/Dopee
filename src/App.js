@@ -11,6 +11,8 @@ import Cart from './components/Cart';
 import Checkout from './components/Checkout';
 import { CartProvider } from './components/CartContext';
 import FooterWrapper from './components/FooterWrapper';
+import Mens from './components/Mens';
+import Women from './components/Women';
 
 const App = () => {
   const [cart, setCart] = useState([]);
@@ -46,12 +48,16 @@ const App = () => {
         <main>
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/smartphones" element={<SmartphoneList />} />
+            <Route path="/smartphone" element={<SmartphoneList />} />
             <Route path="/womenBags" element={<WomenBags />} />
             <Route path="/sneakers" element={<Shoes />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/Mens" element={<Mens />} />
+            <Route path="/Women" element={<Women />} />
+
+
           </Routes>
         </main>
         {/* Use FooterWrapper to conditionally render Footer */}

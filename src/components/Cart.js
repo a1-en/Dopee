@@ -89,7 +89,7 @@ const Cart = () => {
                 </Typography>
                 <Button
                   onClick={handleCheckoutClick}
-                  style={{ backgroundColor: "#e27604" }}
+                  style={{ backgroundColor: "#003366" }}
                   variant="contained"
                   color="primary"
                   fullWidth

@@ -10,7 +10,7 @@ const Footer = () => {
   return (
     <Box
       sx={{
-        backgroundColor: '#e27604', // Dark background for footer
+        backgroundColor: '#003366', // Dark background for footer
         color: '#fff',
         padding: '20px',
         marginTop: 'auto', // Push the footer to the bottom

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Box,
   Button,
@@ -8,301 +8,262 @@ import {
   CardMedia,
   CardContent,
   CardActionArea,
-  Avatar,
+  Badge,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import { Star } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
-// Styled Hero section container
-const HeroContainer = styled(Box)(({ theme }) => ({
+// Images imports
+import image from '../images/1.png';
+import image2 from '../images/3.jpg';
+import image3 from '../images/4.jpg';
+import image4 from '../images/5.jpg';
+import image5 from '../images/6.jpg';
+import image6 from '../images/7.jpg';
+import image7 from '../images/8.jpg';
+import image8 from '../images/9.jpg';
+
+// Styled Hero Section
+const HeroSection = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  padding: theme.spacing(4),
+  backgroundColor: '#b7e9f7',
+  [theme.breakpoints.down('md')]: {
+    justifyContent: 'center',
+  },
+}));
+
+const HeroTextContainer = styled(Box)(({ theme }) => ({
+  maxWidth: '50%',
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '100%',
+    textAlign: 'center',
+    marginBottom: theme.spacing(2),
+  },
+}));
+
+const HeroImage = styled('img')(({ theme }) => ({
+  width: '40%',
+  borderRadius: '10px',
+  [theme.breakpoints.down('md')]: {
+    width: '80%',
+  },
+}));
+
+// Categories Section
+const CategoriesContainer = styled(Grid)(({ theme }) => ({
+  margin: theme.spacing(4, 0),
+}));
+
+const CategoryCard = styled(Card)(({ theme }) => ({
+  padding: theme.spacing(2),
+  textAlign: 'center',
+  backgroundColor: '#f9f9f9',
+  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+}));
+
+// Styled Featured Items Section
+const FeaturedSection = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(4),
+}));
+
+const ProductCard = styled(Card)(({ theme }) => ({
+  maxWidth: 300,
+  margin: theme.spacing(2),
+  textAlign: 'center',
+  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
   position: 'relative',
-  height: '80vh',
+}));
+
+const StarRating = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center',
-  color: '#fff',
-  textAlign: 'center',
+  marginTop: theme.spacing(1),
 }));
 
-const Content = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  zIndex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-}));
-
-// Hero Section
-const HeroSection = () => {
+// Hero Section Component
+const Hero = () => {
   const navigate = useNavigate();
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
 
   return (
-    <HeroContainer>
-      <Content>
-        <Typography variant="h2" component="div" gutterBottom>
-          Welcome to Dopee
+    <HeroSection>
+      <HeroTextContainer>
+        <Typography variant="h4" gutterBottom>
+          Up to 70% off on Black Friday
         </Typography>
-        <Typography variant="h5" component="div" gutterBottom>
-          Best collection of Products for everyone
+        <Typography variant="h5" gutterBottom>
+          TRENDY FASHION COLLECTION
         </Typography>
-        <Button
-          style={{ backgroundColor: '#e27604' }}
-          variant="contained"
-          color="secondary"
-          size="large"
-          onClick={() => navigate('/shop')}
-        >
-          Shop Now
+        <Button onClick={() => navigate('/shop')} variant="contained" sx={{ backgroundColor: '#003366' }} size="large">
+          Buy Now
         </Button>
-      </Content>
-      {/* Placeholder Overlay */}
-      {!imageLoaded && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
-            zIndex: 0,
-          }}
-        />
-      )}
-      {/* Preload Image */}
-      <img
-        src="https://images.pexels.com/photos/322207/pexels-photo-322207.jpeg"
-        alt="Hero Background"
-        style={{ display: 'none' }} // Hide the image to prevent layout shifts
-        onLoad={handleImageLoad}
-      />
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundImage: imageLoaded
-            ? 'url(https://images.pexels.com/photos/322207/pexels-photo-322207.jpeg)'
-            : 'none',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          transition: 'background-image 0.5s ease-in-out',
-          zIndex: 0,
-        }}
-      />
-    </HeroContainer>
+      </HeroTextContainer>
+      <HeroImage src={image} alt="Fashion Sale" />
+    </HeroSection>
   );
 };
 
-// Sample products data
-const initialProducts = [
-  {
-    id: 1,
-    title: 'Smart Phones',
-    image: 'https://images.pexels.com/photos/699122/pexels-photo-699122.jpeg',
-  },
-  {
-    id: 2,
-    title: 'Casual Sneakers',
-    image: 'https://images.pexels.com/photos/2529147/pexels-photo-2529147.jpeg',
-  },
-  {
-    id: 3,
-    title: 'Bags',
-    image: 'https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg',
-  },
-];
+// Categories Component
+const Categories = () => {
+  const categories = [
+    { title: 'Bundle Package', offer: 'Save 30%', image: image2 },
+    { title: 'Valentines Offer', offer: '30% Sale', image: image3 },
+    { title: 'Relax Chair', offer: 'New Arrival', image: image4 },
+  ];
 
-// Styled Featured Products section
-const FeaturedProducts = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(8, 0),
-  backgroundColor: '#f5f5f5',
-}));
-
-// Product Card component
-const ProductCard = React.memo(({ product }) => {
   const navigate = useNavigate();
 
-  const handleClick = () => {
-    if (product.title === 'Smart Phones') {
-      navigate('/smartphones');
-    } else if (product.title === 'Bags') {
-      navigate('/womenBags');
-    } else if (product.title === 'Casual Sneakers') {
-      navigate('/sneakers');
-    }
+  const handleSeeAllClick = () => {
+    navigate('/shop');
   };
 
   return (
-    <Card
-      sx={{
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-        borderRadius: '16px',
-        overflow: 'hidden',
-        transition: 'transform 0.4s ease, box-shadow 0.4s ease',
-        '&:hover': {
-          transform: 'translateY(-10px)',
-          boxShadow: '0 6px 15px rgba(0, 0, 0, 0.2)',
-        },
-      }}
-    >
-      <CardActionArea onClick={handleClick}>
-        <CardMedia
-          component="img"
-          height="260"
-          image={product.image}
-          alt={product.title}
-          loading="lazy"
-          sx={{ filter: 'brightness(0.85)', transition: 'filter 0.3s ease' }}
-        />
-        <CardContent
-          sx={{
-            backgroundColor: '#fff',
-            textAlign: 'center',
-            py: 2,
-          }}
-        >
-          <Typography variant="h6" component="div" gutterBottom>
-            {product.title}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-    </Card>
-  );
-});
-
-// Featured Products Section with loading state
-const FeaturedProductsSection = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate an API call
-    const fetchProducts = async () => {
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // 2-second delay
-      setProducts(initialProducts);
-      setLoading(false);
-    };
-
-    fetchProducts();
-  }, []);
-
-  if (loading) {
-    return <Typography variant="h6" align="center">Loading products...</Typography>;
-  }
-
-  return (
-    <FeaturedProducts>
-      <Typography variant="h4" align="center" gutterBottom>
-        Featured Products
-      </Typography>
-      <Grid container spacing={4} justifyContent="center">
-        {products.map((product) => (
-          <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
-            <ProductCard product={product} />
-          </Grid>
-        ))}
-      </Grid>
-    </FeaturedProducts>
+    <CategoriesContainer container spacing={3} justifyContent="center">
+      {categories.map((category, index) => (
+        <Grid item xs={12} sm={6} md={4} key={index}>
+          <CategoryCard>
+            <img
+              src={category.image}
+              alt={category.title}
+              style={{
+                width: '100%',
+                height: '200px',
+                objectFit: 'cover',
+                borderRadius: '8px',
+              }}
+            />
+            <Typography variant="h6">{category.title}</Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: '#003366',
+                fontWeight: 'bold',
+                fontSize: '1.2rem',
+              }}
+            >
+              {category.offer}
+            </Typography>
+            <Button variant="contained" color="secondary" onClick={handleSeeAllClick}>
+              See All
+            </Button>
+          </CategoryCard>
+        </Grid>
+      ))}
+    </CategoriesContainer>
   );
 };
 
-// Styled Testimonials section
-const TestimonialsContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(8, 0),
-  backgroundColor: '#e0e0e0',
-}));
-
-// Testimonial Card component
-const TestimonialCard = ({ testimonial }) => {
-  return (
-    <Card
-      sx={{
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-        borderRadius: '16px',
-        overflow: 'hidden',
-        textAlign: 'center',
-        backgroundColor: '#fff',
-      }}
-    >
-      <CardContent>
-        <Avatar
-          src={testimonial.avatar}
-          alt={testimonial.name}
-          sx={{ width: 60, height: 60, margin: '0 auto', mb: 2 }}
-        />
-        <Typography variant="body1" sx={{ fontStyle: 'italic', mb: 1 }}>
-          "{testimonial.quote}"
-        </Typography>
-        <Typography variant="h6" component="div" gutterBottom>
-          - {testimonial.name}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {testimonial.role}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
-};
-
-// Testimonials Section
-const TestimonialsSection = () => {
-  const testimonials = [
-    {
-      id: 1,
-      name: 'John Doe',
-      role: 'Regular Customer',
-      quote: 'Dopee has the best products! I always find what I need.',
-      avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
-    },
+// Featured Items Component
+const FeaturedItems = () => {
+  const products = [
     {
       id: 2,
-      name: 'Jane Smith',
-      role: 'Fashion Enthusiast',
-      quote: 'I love the variety and quality of the shoes I bought!',
-      avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
+      title: 'Smartphone',
+      price: '$500.00',
+      oldPrice: '$40.00',
+      image: image7,
+      rating: 4,
+      path: '/smartphone',
     },
     {
+      id: 1,
+      title: 'Modern Chair',
+      price: '$20.00',
+      oldPrice: '$40.00',
+      image: image6,
+      rating: 4,
+      path: '/modern-chair',
+    },
+   
+    {
       id: 3,
-      name: 'Sam Wilson',
-      role: 'Happy Customer',
-      quote: 'Great service and fast shipping. Highly recommend!',
-      avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
+      title: 'Shoes',
+      price: '$20.00',
+      oldPrice: '$40.00',
+      image: image5,
+      rating: 4,
+      path: '/sneakers',
+    },
+    {
+      id: 4,
+      title: 'Bags',
+      price: '$20.00',
+      oldPrice: '$40.00',
+      image: image8,
+      rating: 4,
+      path: '/womenBags',
     },
   ];
 
+  const navigate = useNavigate();
+
+  const handleCardClick = (path) => {
+    navigate(path);
+  };
+
   return (
-    <TestimonialsContainer>
+    <FeaturedSection>
       <Typography variant="h4" align="center" gutterBottom>
-        What Our Customers Say
+        Featured Items
       </Typography>
-      <Grid container spacing={4} justifyContent="center">
-        {testimonials.map((testimonial) => (
-          <Grid item key={testimonial.id} xs={12} sm={6} md={4}>
-            <TestimonialCard testimonial={testimonial} />
+      <Grid container spacing={3} justifyContent="center">
+        {products.map((product) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
+            <ProductCard onClick={() => handleCardClick(product.path)}>
+              <Badge
+                badgeContent="-30%"
+                color="error"
+                sx={{
+                  position: 'absolute',
+                  top: 10,
+                  left: 20,
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold',
+                  backgroundColor: '#003366',
+                  color: '#fff',
+                }}
+              />
+              <CardActionArea>
+                <CardMedia
+                  component="img"
+                  height="200"
+                  image={product.image}
+                  alt={product.title}
+                />
+                <CardContent>
+                  <Typography variant="h6">{product.title}</Typography>
+                  <StarRating>
+                    {[...Array(product.rating)].map((_, index) => (
+                      <Star key={index} sx={{ color: 'orange' }} />
+                    ))}
+                  </StarRating>
+                  <Typography variant="body2" color="text.secondary">
+                    <del>{product.oldPrice}</del>
+                    <Typography variant="h6" sx={{ color: '#00bcd4', fontSize: '1.25rem' }}>
+                      {product.price}
+                    </Typography>
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </ProductCard>
           </Grid>
         ))}
       </Grid>
-    </TestimonialsContainer>
+    </FeaturedSection>
   );
 };
 
-// Landing Page component
+// Landing Page Component
 const LandingPage = () => {
   return (
     <Box>
-      <HeroSection />
-      <FeaturedProductsSection />
-      <TestimonialsSection />
+      <Hero />
+      <Categories />
+      <FeaturedItems />
     </Box>
   );
 };

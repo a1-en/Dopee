@@ -20,6 +20,8 @@ import {
   Grid,
   Modal,
   TextField,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -49,7 +51,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: 'black',
+  color: '#000',
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -67,7 +69,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-// Modal styles
 const modalStyle = {
   position: 'absolute',
   top: '50%',
@@ -96,10 +97,9 @@ const useDebounce = (value, delay) => {
   return debouncedValue;
 };
 
-// Navbar component
 const Navbar = () => {
   const navigate = useNavigate();
-  const { cart, addToCart } = useCart();
+  const { cart, setCart } = useCart();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -109,8 +109,8 @@ const Navbar = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-  // Debounce the search query
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const toggleDrawer = () => {
@@ -146,11 +146,20 @@ const Navbar = () => {
     setSelectedProduct(null);
   };
 
-  const handleAddToCart = () => {
-    addToCart(selectedProduct);
-    handleCloseModal();
-  };
+const handleAddToCart = () => {
+    // Add selected product to the cart
+    setCart([...cart, selectedProduct]);
+    
+    // Clear the search field
+    setSearchQuery('');
+    setSnackbarOpen(true);
 
+    // Close the modal
+    setModalOpen(false);
+  };
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
   const handleContactFormChange = (event) => {
     const { name, value } = event.target;
     setContactForm((prev) => ({ ...prev, [name]: value }));
@@ -172,6 +181,14 @@ const Navbar = () => {
         <ListItem button onClick={() => navigate('/shop')}>
           <ListItemText primary="Shop" />
         </ListItem>
+        <ListItem button onClick={() => navigate('/Women')}>
+          <ListItemText primary="Women" />
+        </ListItem>
+        <ListItem button onClick={() => navigate('/Mens')}>
+          <ListItemText primary="Mens" />
+        </ListItem>
+      
+      
         <ListItem button onClick={() => setContactModalOpen(true)}>
           <ListItemText primary="Contact Us" />
         </ListItem>
@@ -180,142 +197,200 @@ const Navbar = () => {
   );
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#e27604' }}>
-      <Toolbar>
-        {isMobile ? (
-          <>
-            <IconButton color="inherit" edge="start" onClick={toggleDrawer} sx={{ mr: 2 }}>
-              <MenuIcon />
-            </IconButton>
-            <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
-              {drawerContent}
-            </Drawer>
-          </>
-        ) : (
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Dopee
-          </Typography>
-        )}
-        {!isMobile && (
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}>
-            <Button color="inherit" onClick={() => setContactModalOpen(true)}>
-              Contact Us
-            </Button>
-            <Button color="inherit" onClick={() => navigate('/')}>
-              Home
-            </Button>
-            <Button color="inherit" onClick={() => navigate('/shop')}>
-              Shop
-            </Button>
+    <>
+      <AppBar position="static" sx={{ background: '#003366' }}>
+        <Toolbar>
+          {isMobile ? (
+            <>
+              <IconButton color="inherit" edge="start" onClick={toggleDrawer} sx={{ mr: 2 }}>
+                <MenuIcon />
+              </IconButton>
+              <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
+                {drawerContent}
+              </Drawer>
+            </>
+          ) : (
+            <Typography variant="h5" component="div" sx={{ flexGrow: 1, fontWeight: 'bold', fontSize: '24px' }}>
+              Dopee
+            </Typography>
+          )}
+
+          {!isMobile && (
+           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}>
+           <Button 
+             color="inherit" 
+             sx={{ 
+               '&:hover': { 
+                 borderBottom: '2px solid #add8e6'  // Light blue line on hover
+               } 
+             }} 
+             onClick={() => setContactModalOpen(true)}>
+             Contact Us
+           </Button>
+           <Button 
+             color="inherit" 
+             sx={{ 
+               '&:hover': { 
+                 borderBottom: '2px solid #add8e6'  // Light blue line on hover
+               } 
+             }} 
+             onClick={() => navigate('/')}>
+             Home
+           </Button>
+           <Button 
+             color="inherit" 
+             sx={{ 
+               '&:hover': { 
+                 borderBottom: '2px solid #add8e6'  // Light blue line on hover
+               } 
+             }} 
+             onClick={() => navigate('/shop')}>
+             Shop
+           </Button>
+           <Button 
+             color="inherit" 
+             sx={{ 
+               '&:hover': { 
+                 borderBottom: '2px solid #add8e6'  // Light blue line on hover
+               } 
+             }} 
+             onClick={() => navigate('/Women')}>
+             Women
+           </Button>
+           <Button 
+             color="inherit" 
+             sx={{ 
+               '&:hover': { 
+                 borderBottom: '2px solid #add8e6'  // Light blue line on hover
+               } 
+             }} 
+             onClick={() => navigate('/Mens')}>
+             Mens
+           </Button>
+         </Box>
+         
+          )}
+
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search…"
+              inputProps={{ 'aria-label': 'search' }}
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </Search>
+          <IconButton color="inherit" onClick={() => navigate('/cart')}>
+            <Badge badgeContent={cart.length} color="black">
+              <ShoppingCartIcon />
+            </Badge>
+          </IconButton>
+        </Toolbar>
+        {searchResults.length > 0 && (
+          <Box sx={{ backgroundColor: '#fff', padding: 2, mt: 1 }}>
+            <Grid container spacing={2}>
+              {searchResults.map((product) => (
+                <Grid item xs={12} sm={6} md={4} key={product.id}>
+                  <Card onClick={() => handleProductClick(product)} sx={{ cursor: 'pointer', boxShadow: 3 }}>
+                    <CardMedia
+                      component="img"
+                      height="80"
+                      sx={{ objectFit: 'contain', width: 'auto', margin: '0 auto' }}
+                      image={product.images[0]}
+                      alt={product.title}
+                    />
+                    <CardContent>
+                      <Typography variant="h6">{product.title}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {product.description.slice(0, 50)}...
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
           </Box>
         )}
-        <Search>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
-            placeholder="Search…"
-            inputProps={{ 'aria-label': 'search' }}
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        </Search>
-        <IconButton color="inherit" onClick={() => navigate('/cart')}>
-          <Badge badgeContent={cart.length} color="black">
-            <ShoppingCartIcon />
-          </Badge>
-        </IconButton>
-      </Toolbar>
-
-      {searchResults.length > 0 && (
-        <Box sx={{ backgroundColor: '#fff', padding: 2, mt: 1 }}>
-          <Grid container spacing={2}>
-            {searchResults.map((product) => (
-              <Grid item xs={12} sm={6} md={4} key={product.id}>
-                <Card onClick={() => handleProductClick(product)} sx={{ cursor: 'pointer' }}>
-                  <CardMedia
-                    component="img"
-                    height="80"
-                    sx={{ objectFit: 'contain', width: 'auto', margin: '0 auto' }}
-                    image={product.images[0]}
-                    alt={product.title}
-                  />
-                  <CardContent>
-                    <Typography variant="h6">{product.title}</Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Price: ${product.price}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      )}
-
-      {/* Modal for product details */}
+      </AppBar>
       <Modal open={modalOpen} onClose={handleCloseModal}>
         <Box sx={modalStyle}>
           {selectedProduct && (
             <>
-              <Typography variant="h6" component="h2">{selectedProduct.title}</Typography>
-              <CardMedia
-                component="img"
-                height="200"
-                sx={{ objectFit: 'contain', width: '100%', margin: '0 auto' }}
-                image={selectedProduct.images[0]}
-                alt={selectedProduct.title}
-              />
-              <Typography variant="body2" color="textSecondary">Price: ${selectedProduct.price}</Typography>
-              <Typography variant="body2" color="textSecondary">Discount: {selectedProduct.discountPercentage}%</Typography>
-              <Typography variant="body2" color="textSecondary">Rating: {selectedProduct.rating}</Typography>
-              <Typography variant="body2" color="textSecondary">Description: {selectedProduct.description}</Typography>
-              <Button variant="contained" onClick={handleAddToCart}>Add to Cart</Button>
+             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+    <img 
+      src={selectedProduct.thumbnail} // Assuming the image URL is in the selectedProduct object
+      alt={selectedProduct.title} 
+      style={{ maxWidth: '60%', height: 'auto' }} // Adjust as needed
+    />
+  </Box>
+              <Typography variant="h6" component="h2">
+                {selectedProduct.title}
+              </Typography>
+              <Typography variant="body2">{selectedProduct.description}</Typography>
+              <Button onClick={handleAddToCart} variant="contained"  fullWidth sx={{ mt: 2 , backgroundColor:'#003366' }}>
+                Add to Cart
+              </Button>
             </>
           )}
         </Box>
       </Modal>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          Added to Cart
+        </Alert>
+      </Snackbar>
 
-      {/* Modal for contact form */}
       <Modal open={contactModalOpen} onClose={() => setContactModalOpen(false)}>
         <Box sx={modalStyle}>
           <Typography variant="h6">Contact Us</Typography>
           <form onSubmit={handleContactSubmit}>
             <TextField
-              label="Name"
               name="name"
+              label="Your Name"
+              variant="outlined"
+              fullWidth
               value={contactForm.name}
               onChange={handleContactFormChange}
-              fullWidth
-              required
-              margin="normal"
+              sx={{ mt: 2 }}
             />
             <TextField
-              label="Email"
               name="email"
+              label="Your Email"
+              variant="outlined"
+              fullWidth
               value={contactForm.email}
               onChange={handleContactFormChange}
-              type="email"
-              fullWidth
-              required
-              margin="normal"
+              sx={{ mt: 2 }}
             />
             <TextField
-              label="Message"
               name="message"
-              value={contactForm.message}
-              onChange={handleContactFormChange}
+              label="Your Message"
+              variant="outlined"
+              fullWidth
               multiline
               rows={4}
-              fullWidth
-              required
-              margin="normal"
+              value={contactForm.message}
+              onChange={handleContactFormChange}
+              sx={{ mt: 2 }}
             />
-            <Button type="submit" variant="contained" color="primary">Send</Button>
+           <Button 
+  type="submit" 
+  variant="contained" 
+  sx={{ backgroundColor: '#003366', mt: 2 }} 
+  fullWidth
+>
+  Submit
+</Button>
           </form>
         </Box>
       </Modal>
-    </AppBar>
+    </>
   );
 };
 
