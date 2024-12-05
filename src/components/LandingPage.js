@@ -176,7 +176,7 @@ const FeaturedItems = () => {
       oldPrice: '$40.00',
       image: image6,
       rating: 4,
-      path: '/modern-chair',
+      path: '/',
     },
    
     {
