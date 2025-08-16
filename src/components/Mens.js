@@ -1,204 +1,137 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Button, Typography, Grid, Card, CardMedia, CardContent, CardActionArea, Snackbar, Alert, Modal } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { useCart } from './CartContext'; // Import the useCart hook
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  borderRadius: '16px',
-  boxShadow: '0 8px 20px rgba(0, 0, 0, 0.12)',
-  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-  maxWidth: 400,
-  '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 12px 24px rgba(0, 0, 0, 0.2)',
-  },
-}));
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-  borderRadius: '30px',
-  color: 'white',
-  padding: '10px 20px',
-  fontWeight: 'bold',
-  transition: 'background 0.3s ease-in-out',
-  '&:hover': {
-    background: 'linear-gradient(45deg, #FE6B8B 20%, #FF8E53 80%)',
-  },
-}));
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
+import { Badge } from './ui/badge';
+import { 
+  ArrowLeft, 
+  ShoppingBag, 
+  Heart, 
+  Star,
+  Sparkles
+} from 'lucide-react';
 
 const Mens = () => {
-  const [products, setProducts] = useState([]);
-  const {setCart } = useCart(); // Use the Cart context
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar state
-  const [modalOpen, setModalOpen] = useState(false); // Modal state
-  const [selectedProduct, setSelectedProduct] = useState(null); // Selected product state
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-
-  useEffect(() => {
-    const urls = [
-      'https://dummyjson.com/products/category/mens-shirts',
-      'https://dummyjson.com/products/category/mens-watches',
-      'https://dummyjson.com/products/category/mens-shoes',
-    ];
-
-    Promise.all(urls.map((url) => fetch(url).then((res) => res.json())))
-      .then((responses) => {
-        // Combine all products into a single array
-        const combinedProducts = responses.flatMap((response) => response.products);
-        setProducts(combinedProducts);
-      })
-      .catch((err) => {
-        console.error('Error fetching data:', err);
-        setError('Failed to fetch products.');
-      });
-  }, []);
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-  const addToCart = (product) => {
-    setCart((prevCart) => [...prevCart, product]); // Add the product to the cart
-    console.log(`${product.title} added to cart`);
-    setSnackbarOpen(true); // Open the Snackbar
-    closeModal(); // Close the modal after adding to the cart
-  };
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false); // Close the Snackbar
-  };
-
-  const openModal = (product) => {
-    setSelectedProduct(product); // Set the selected product
-    setModalOpen(true); // Open the modal
-  };
-
-  const closeModal = () => {
-    setModalOpen(false); // Close the modal
-    setSelectedProduct(null); // Reset selected product
-  };
+  const mensProducts = [
+    {
+      id: 1,
+      title: 'Classic White Shirt',
+      price: 59.99,
+      oldPrice: 79.99,
+      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
+      rating: 4.7,
+      badge: 'New'
+    },
+    {
+      id: 2,
+      title: 'Premium Denim Jacket',
+      price: 89.99,
+      oldPrice: 119.99,
+      image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=400',
+      rating: 4.8,
+      badge: 'Sale'
+    },
+    {
+      id: 3,
+      title: 'Formal Business Suit',
+      price: 299.99,
+      oldPrice: 399.99,
+      image: 'https://images.unsplash.com/photo-1593030761757-71cae7652e64?w=400',
+      rating: 4.9,
+      badge: 'Premium'
+    },
+    {
+      id: 4,
+      title: 'Casual Sneakers',
+      price: 69.99,
+      oldPrice: 89.99,
+      image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400',
+      rating: 4.6,
+      badge: 'Trending'
+    }
+  ];
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', my: 4, px: 2 }}>
-      <Typography variant="h4" component="h1" align="center" gutterBottom>
-     Mens 
-      </Typography>
-      <Grid container spacing={4} justifyContent="center">
-        {products.map((product) => (
-          <Grid item key={product.id} xs={12} sm={6} md={3}>
-            <StyledCard>
-              <CardActionArea onClick={() => openModal(product)}> {/* Open modal on card click */}
-                <CardMedia
-                  component="img"
-                  image={product.thumbnail}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-20">
+      <div className="container mx-auto px-4">
+        {/* Header */}
+        <div className="mb-8">
+          <Button 
+            variant="ghost" 
+            className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 mb-4"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full px-4 py-2 mb-4">
+              <Sparkles className="w-4 h-4 text-blue-600" />
+              <span className="text-blue-700 font-medium">Men's Collection</span>
+            </div>
+            <h1 className="text-5xl font-bold text-gray-900 mb-4">Men's Fashion</h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover sophisticated and stylish pieces designed for the modern man. 
+              From casual wear to formal elegance, elevate your wardrobe.
+            </p>
+          </div>
+        </div>
+
+        {/* Products Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {mensProducts.map((product) => (
+            <Card key={product.id} className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+              <div className="relative overflow-hidden">
+                <img
+                  src={product.image}
                   alt={product.title}
-                  sx={{
-                    height: 200,
-                    width: 100,
-                    borderRadius: '16px 16px 0 0',
-                    objectFit: 'cover',
-                    margin: '0 auto',
-                  }}
+                  className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <CardContent sx={{ padding: 3 }}>
-                  <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+                
+                <Badge className="absolute top-3 left-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white border-0">
+                  {product.badge}
+                </Badge>
+                
+                <div className="absolute top-3 right-3 space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Button variant="ghost" size="icon" className="bg-white/90 backdrop-blur-sm hover:bg-white text-gray-700">
+                    <Heart className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="bg-white/90 backdrop-blur-sm hover:bg-white text-gray-700">
+                    <ShoppingBag className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+              
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                     {product.title}
-                  </Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                    <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
-                      ${product.price.toFixed(2)}
-                    </Typography>
-                    <Typography variant="body2" color="text.primary">
-                      <strong>{product.discountPercentage}% Off</strong>
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary">
-                    <strong>Rating:</strong> {product.rating} / 5
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-              <Box sx={{ p: 2 }}>
-                <StyledButton
-                  variant="contained"
-                  onClick={() => addToCart(product)}
-                  fullWidth
-                >
-                  Add to Cart
-                </StyledButton>
-              </Box>
-            </StyledCard>
-          </Grid>
-        ))}
-      </Grid>
-
-      {/* Snackbar for successful addition to cart */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Position at top center
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="success"
-          sx={{
-            backgroundColor: '#4caf50', // Green background
-            color: 'white', // White text
-            fontWeight: 'bold',
-          }}
-        >
-          Product added to cart!
-        </Alert>
-      </Snackbar>
-
-      {/* Product Modal */}
-      <Modal open={modalOpen} onClose={closeModal}>
-        <Box sx={{ 
-          position: 'absolute', 
-          top: '50%', 
-          left: '50%', 
-          transform: 'translate(-50%, -50%)', 
-          width: 400, 
-          bgcolor: 'background.paper', 
-          borderRadius: '16px', 
-          boxShadow: 24, 
-          p: 4 
-        }}>
-          {selectedProduct && (
-            <>
-              <CardMedia
-                component="img"
-                image={selectedProduct.thumbnail} // Use a larger image if available
-                alt={selectedProduct.title}
-                sx={{
-                  height: 140,
-                  width: 100,
-                  borderRadius: '16px 16px 0 0',
-                  objectFit: 'cover',
-                  margin: '0 auto',
-                }}
-              />              
-              <Typography variant="h6" component="h2" gutterBottom>
-                {selectedProduct.title}
-              </Typography>
-              <Typography variant="body1" gutterBottom>
-                <strong>Price:</strong> ${selectedProduct.price.toFixed(2)}
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                <strong>Description:</strong> {selectedProduct.description}
-              </Typography>
-              <StyledButton
-                variant="contained"
-                onClick={() => addToCart(selectedProduct)} // Add product to cart from modal
-                fullWidth
-              >
+                </h3>
+                
+                <div className="flex items-center gap-1 mb-3">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                  ))}
+                  <span className="text-sm text-gray-500 ml-2">({product.rating})</span>
+                </div>
+                
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-xl font-bold text-blue-600">${product.price}</span>
+                  <span className="text-sm text-gray-500 line-through">${product.oldPrice}</span>
+                </div>
+                
+                <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white">
+                  <ShoppingBag className="w-4 h-4 mr-2" />
                 Add to Cart
-              </StyledButton>
-            </>
-          )}
-        </Box>
-      </Modal>
-    </Box>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 };
 

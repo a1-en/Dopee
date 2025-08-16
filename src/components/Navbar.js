@@ -1,84 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-  InputBase,
-  Box,
-  styled,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  useMediaQuery,
-  Badge,
-  Card,
-  CardMedia,
-  CardContent,
-  Grid,
-  Modal,
-  TextField,
-  Snackbar,
-  Alert
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
 import { useCart } from './CartContext';
-
-// Styled components
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: '#fff',
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: '#000',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'black',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    width: '100%',
-    borderRadius: theme.shape.borderRadius,
-    border: '1px solid #ccc',
-    transition: 'border-color 0.3s ease',
-    '&:focus': {
-      borderColor: theme.palette.primary.main,
-    },
-  },
-}));
-
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Badge } from './ui/badge';
+import { Label } from './ui/label';
+import { Separator } from './ui/separator';
+import { 
+  Menu, 
+  Search, 
+  ShoppingCart, 
+  X, 
+  Heart,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Star,
+  Plus,
+  Minus
+} from 'lucide-react';
 
 // Debounce function
 const useDebounce = (value, delay) => {
@@ -100,22 +42,16 @@ const useDebounce = (value, delay) => {
 const Navbar = () => {
   const navigate = useNavigate();
   const { cart, setCart } = useCart();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [productModalOpen, setProductModalOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
-
-  const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
-  };
 
   useEffect(() => {
     if (debouncedSearchQuery) {
@@ -127,269 +63,382 @@ const Navbar = () => {
         .catch((err) => console.error('Fetch error:', err));
     } else {
       setSearchResults([]);
-      setSelectedProduct(null);
-      setModalOpen(false);
     }
   }, [debouncedSearchQuery]);
 
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
   const handleProductClick = (product) => {
     setSelectedProduct(product);
-    setModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedProduct(null);
+    setProductModalOpen(true);
   };
 
 const handleAddToCart = () => {
-    // Add selected product to the cart
+    if (selectedProduct) {
     setCart([...cart, selectedProduct]);
-    
-    // Clear the search field
     setSearchQuery('');
-    setSnackbarOpen(true);
-
-    // Close the modal
-    setModalOpen(false);
-  };
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
-  const handleContactFormChange = (event) => {
-    const { name, value } = event.target;
-    setContactForm((prev) => ({ ...prev, [name]: value }));
+      setProductModalOpen(false);
+      setNotification({
+        show: true,
+        message: 'Added to Cart Successfully!',
+        type: 'success'
+      });
+      setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 3000);
+    }
   };
 
-  const handleContactSubmit = (event) => {
-    event.preventDefault();
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
     console.log('Contact Form Submitted:', contactForm);
     setContactForm({ name: '', email: '', message: '' });
     setContactModalOpen(false);
+    setNotification({
+      show: true,
+      message: 'Message sent successfully!',
+      type: 'success'
+    });
+    setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 3000);
   };
 
-  const drawerContent = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer}>
-      <List>
-        <ListItem button onClick={() => navigate('/')}>
-          <ListItemText primary="Home" />
-        </ListItem>
-        <ListItem button onClick={() => navigate('/shop')}>
-          <ListItemText primary="Shop" />
-        </ListItem>
-        <ListItem button onClick={() => navigate('/Women')}>
-          <ListItemText primary="Women" />
-        </ListItem>
-        <ListItem button onClick={() => navigate('/Mens')}>
-          <ListItemText primary="Mens" />
-        </ListItem>
+  const updateCartItemQuantity = (productId, change) => {
+    setCart(prevCart => {
+      const newCart = [...prevCart];
+      const itemIndex = newCart.findIndex(item => item.id === productId);
       
+      if (itemIndex !== -1) {
+        if (change === -1 && newCart[itemIndex].quantity <= 1) {
+          newCart.splice(itemIndex, 1);
+        } else {
+          newCart[itemIndex].quantity = (newCart[itemIndex].quantity || 1) + change;
+        }
+      }
       
-        <ListItem button onClick={() => setContactModalOpen(true)}>
-          <ListItemText primary="Contact Us" />
-        </ListItem>
-      </List>
-    </Box>
-  );
+      return newCart;
+    });
+  };
+
+  const getTotalItems = () => {
+    return cart.reduce((total, item) => total + (item.quantity || 1), 0);
+  };
+
+  const getTotalPrice = () => {
+    return cart.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
+  };
 
   return (
     <>
-      <AppBar position="static" sx={{ background: '#003366' }}>
-        <Toolbar>
-          {isMobile ? (
-            <>
-              <IconButton color="inherit" edge="start" onClick={toggleDrawer} sx={{ mr: 2 }}>
-                <MenuIcon />
-              </IconButton>
-              <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
-                {drawerContent}
-              </Drawer>
-            </>
-          ) : (
-            <Typography variant="h5" component="div" sx={{ flexGrow: 1, fontWeight: 'bold', fontSize: '24px' }}>
-              Dopee
-            </Typography>
-          )}
+      {/* Top Bar */}
+      <div className="bg-gradient-to-r from-purple-900 to-slate-900 text-white py-2">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                <span>+1 (555) 123-4567</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                <span>support@dopee.com</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <span>Free shipping on orders over $100</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          {!isMobile && (
-           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}>
+      {/* Main Navbar */}
+      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <div className="flex items-center">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              Dopee
+              </h1>
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-8">
            <Button 
-             color="inherit" 
-             sx={{ 
-               '&:hover': { 
-                 borderBottom: '2px solid #add8e6'  // Light blue line on hover
-               } 
-             }} 
-             onClick={() => setContactModalOpen(true)}>
-             Contact Us
-           </Button>
-           <Button 
-             color="inherit" 
-             sx={{ 
-               '&:hover': { 
-                 borderBottom: '2px solid #add8e6'  // Light blue line on hover
-               } 
-             }} 
-             onClick={() => navigate('/')}>
+                variant="ghost" 
+                className="text-gray-700 hover:text-purple-600 hover:bg-purple-50 font-medium"
+                onClick={() => navigate('/')}
+              >
              Home
            </Button>
            <Button 
-             color="inherit" 
-             sx={{ 
-               '&:hover': { 
-                 borderBottom: '2px solid #add8e6'  // Light blue line on hover
-               } 
-             }} 
-             onClick={() => navigate('/shop')}>
+                variant="ghost" 
+                className="text-gray-700 hover:text-purple-600 hover:bg-purple-50 font-medium"
+                onClick={() => navigate('/shop')}
+              >
              Shop
            </Button>
            <Button 
-             color="inherit" 
-             sx={{ 
-               '&:hover': { 
-                 borderBottom: '2px solid #add8e6'  // Light blue line on hover
-               } 
-             }} 
-             onClick={() => navigate('/Women')}>
+                variant="ghost" 
+                className="text-gray-700 hover:text-purple-600 hover:bg-purple-50 font-medium"
+                onClick={() => navigate('/Women')}
+              >
              Women
            </Button>
            <Button 
-             color="inherit" 
-             sx={{ 
-               '&:hover': { 
-                 borderBottom: '2px solid #add8e6'  // Light blue line on hover
-               } 
-             }} 
-             onClick={() => navigate('/Mens')}>
-             Mens
+                variant="ghost" 
+                className="text-gray-700 hover:text-purple-600 hover:bg-purple-50 font-medium"
+                onClick={() => navigate('/Mens')}
+              >
+                Men
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="text-gray-700 hover:text-purple-600 hover:bg-purple-50 font-medium"
+                onClick={() => setContactModalOpen(true)}
+              >
+                Contact
            </Button>
-         </Box>
-         
-          )}
+            </div>
 
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
+            {/* Search Bar */}
+            <div className="hidden md:flex flex-1 max-w-md mx-8 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                type="text"
+                placeholder="Search products..."
               value={searchQuery}
-              onChange={handleSearchChange}
-            />
-          </Search>
-          <IconButton color="inherit" onClick={() => navigate('/cart')}>
-            <Badge badgeContent={cart.length} color="black">
-              <ShoppingCartIcon />
-            </Badge>
-          </IconButton>
-        </Toolbar>
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+              />
+              
+              {/* Search Results Dropdown */}
         {searchResults.length > 0 && (
-          <Box sx={{ backgroundColor: '#fff', padding: 2, mt: 1 }}>
-            <Grid container spacing={2}>
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
               {searchResults.map((product) => (
-                <Grid item xs={12} sm={6} md={4} key={product.id}>
-                  <Card onClick={() => handleProductClick(product)} sx={{ cursor: 'pointer', boxShadow: 3 }}>
-                    <CardMedia
-                      component="img"
-                      height="80"
-                      sx={{ objectFit: 'contain', width: 'auto', margin: '0 auto' }}
-                      image={product.images[0]}
+                    <div
+                      key={product.id}
+                      className="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+                      onClick={() => handleProductClick(product)}
+                    >
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={product.thumbnail}
                       alt={product.title}
-                    />
-                    <CardContent>
-                      <Typography variant="h6">{product.title}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {product.description.slice(0, 50)}...
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        )}
-      </AppBar>
-      <Modal open={modalOpen} onClose={handleCloseModal}>
-        <Box sx={modalStyle}>
-          {selectedProduct && (
-            <>
-             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-    <img 
-      src={selectedProduct.thumbnail} // Assuming the image URL is in the selectedProduct object
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">{product.title}</h4>
+                          <p className="text-sm text-gray-600">{product.description.slice(0, 60)}...</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <div className="flex items-center gap-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className={`w-3 h-3 ${i < Math.floor(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                              ))}
+                            </div>
+                            <span className="text-sm text-gray-500">({product.rating})</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-purple-600">${product.price}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Right Side Actions */}
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" className="relative">
+                <Heart className="w-5 h-5 text-gray-600" />
+              </Button>
+              
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative"
+                onClick={() => navigate('/cart')}
+              >
+                <ShoppingCart className="w-5 h-5 text-gray-600" />
+                {cart.length > 0 && (
+                  <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs">
+                    {getTotalItems()}
+                  </Badge>
+                )}
+              </Button>
+
+              <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileMenuOpen(true)}>
+                <Menu className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)} />
+          <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-xl">
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-xl font-semibold">Menu</h2>
+              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start text-lg"
+                onClick={() => { navigate('/'); setMobileMenuOpen(false); }}
+              >
+                Home
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start text-lg"
+                onClick={() => { navigate('/shop'); setMobileMenuOpen(false); }}
+              >
+                Shop
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start text-lg"
+                onClick={() => { navigate('/Women'); setMobileMenuOpen(false); }}
+              >
+                Women
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start text-lg"
+                onClick={() => { navigate('/Mens'); setMobileMenuOpen(false); }}
+              >
+                Men
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start text-lg"
+                onClick={() => { setContactModalOpen(true); setMobileMenuOpen(false); }}
+              >
+                Contact
+              </Button>
+            </div>
+
+            {/* Mobile Search */}
+            <div className="p-6 border-t">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 py-2 border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Product Modal */}
+      {productModalOpen && selectedProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setProductModalOpen(false)} />
+          <Card className="relative w-full max-w-md bg-white">
+            <CardHeader className="text-center">
+              <CardTitle>{selectedProduct.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <img
+                src={selectedProduct.thumbnail}
       alt={selectedProduct.title} 
-      style={{ maxWidth: '60%', height: 'auto' }} // Adjust as needed
-    />
-  </Box>
-              <Typography variant="h6" component="h2">
-                {selectedProduct.title}
-              </Typography>
-              <Typography variant="body2">{selectedProduct.description}</Typography>
-              <Button onClick={handleAddToCart} variant="contained"  fullWidth sx={{ mt: 2 , backgroundColor:'#003366' }}>
+                className="w-full h-48 object-cover rounded-lg"
+              />
+              <p className="text-gray-600">{selectedProduct.description}</p>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-purple-600">${selectedProduct.price}</span>
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-4 h-4 ${i < Math.floor(selectedProduct.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                  ))}
+                  <span className="text-sm text-gray-500 ml-2">({selectedProduct.rating})</span>
+                </div>
+              </div>
+              <Button 
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                onClick={handleAddToCart}
+              >
                 Add to Cart
               </Button>
-            </>
-          )}
-        </Box>
-      </Modal>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          Added to Cart
-        </Alert>
-      </Snackbar>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-      <Modal open={contactModalOpen} onClose={() => setContactModalOpen(false)}>
-        <Box sx={modalStyle}>
-          <Typography variant="h6">Contact Us</Typography>
-          <form onSubmit={handleContactSubmit}>
-            <TextField
+      {/* Contact Modal */}
+      {contactModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setContactModalOpen(false)} />
+          <Card className="relative w-full max-w-md bg-white">
+            <CardHeader>
+              <CardTitle className="text-center">Contact Us</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleContactSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
               name="name"
-              label="Your Name"
-              variant="outlined"
-              fullWidth
               value={contactForm.name}
-              onChange={handleContactFormChange}
-              sx={{ mt: 2 }}
-            />
-            <TextField
+                    onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
               name="email"
-              label="Your Email"
-              variant="outlined"
-              fullWidth
+                    type="email"
               value={contactForm.email}
-              onChange={handleContactFormChange}
-              sx={{ mt: 2 }}
-            />
-            <TextField
+                    onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="message">Message</Label>
+                  <textarea
+                    id="message"
               name="message"
-              label="Your Message"
-              variant="outlined"
-              fullWidth
-              multiline
+                    value={contactForm.message}
+                    onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               rows={4}
-              value={contactForm.message}
-              onChange={handleContactFormChange}
-              sx={{ mt: 2 }}
+                    required
             />
+                </div>
            <Button 
   type="submit" 
-  variant="contained" 
-  sx={{ backgroundColor: '#003366', mt: 2 }} 
-  fullWidth
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
 >
-  Submit
+                  Send Message
 </Button>
           </form>
-        </Box>
-      </Modal>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Notification */}
+      {notification.show && (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg ${
+          notification.type === 'success' 
+            ? 'bg-green-500 text-white' 
+            : 'bg-red-500 text-white'
+        }`}>
+          {notification.message}
+        </div>
+      )}
     </>
   );
 };

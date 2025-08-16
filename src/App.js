@@ -1,69 +1,51 @@
 // src/App.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LandingPage from './components/LandingPage';
-import SmartphoneList from './components/SmartphoneList';
-import WomenBags from './components/WomenBags';
-import Shoes from './components/Shoes';
+import { CartProvider } from './components/CartContext';
+import { ThemeProvider } from './components/ThemeProvider';
+import { Toaster } from './components/ui/sonner';
+
+// Layout Components
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+
+// Page Components
+import LandingPage from './components/LandingPage';
 import Shop from './components/Shop';
 import Cart from './components/Cart';
 import Checkout from './components/Checkout';
-import { CartProvider } from './components/CartContext';
-import FooterWrapper from './components/FooterWrapper';
-import Mens from './components/Mens';
 import Women from './components/Women';
+import Mens from './components/Mens';
+import WomenBags from './components/WomenBags';
+import Shoes from './components/Shoes';
+import SmartphoneList from './components/SmartphoneList';
 
 const App = () => {
-  const [cart, setCart] = useState([]);
-  
-  // Add global styles using useEffect
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      body {
-        margin: 0;
-        padding-bottom: 80px; /* Adjust this value based on your footer height */
-      }
-      #root {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh; /* Ensure the root can expand to full height */
-      }
-      main {
-        flex: 1; /* Make the main content fill available space */
-      }
-    `;
-    document.head.appendChild(style);
-    
-    return () => {
-      document.head.removeChild(style); // Clean up on unmount
-    };
-  }, []);
-
   return (
-    <CartProvider value={{ cart, setCart }}>
-      <Router>
-        <Navbar />
-        <main>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/smartphone" element={<SmartphoneList />} />
-            <Route path="/womenBags" element={<WomenBags />} />
-            <Route path="/sneakers" element={<Shoes />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/Mens" element={<Mens />} />
-            <Route path="/Women" element={<Women />} />
-
-
-          </Routes>
-        </main>
-        {/* Use FooterWrapper to conditionally render Footer */}
-        <FooterWrapper />
-      </Router>
-    </CartProvider>
+    <ThemeProvider defaultTheme="light" storageKey="dopee-theme">
+      <CartProvider>
+        <Router>
+          <div className="min-h-screen bg-background">
+            <Navbar />
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/Women" element={<Women />} />
+                <Route path="/Mens" element={<Mens />} />
+                <Route path="/womenBags" element={<WomenBags />} />
+                <Route path="/sneakers" element={<Shoes />} />
+                <Route path="/smartphone" element={<SmartphoneList />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+          <Toaster />
+        </Router>
+      </CartProvider>
+    </ThemeProvider>
   );
 };
 
