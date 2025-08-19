@@ -6,7 +6,6 @@ import { Input } from './ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Label } from './ui/label';
-import { Separator } from './ui/separator';
 import { 
   Menu, 
   Search, 
@@ -15,7 +14,6 @@ import {
   Heart,
   Phone,
   Mail,
-  MapPin,
   Star
 } from 'lucide-react';
 

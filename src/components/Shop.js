@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
-import { Separator } from './ui/separator';
+
 import {
   Search, 
   Grid3X3, 
