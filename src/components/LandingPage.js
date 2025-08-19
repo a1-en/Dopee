@@ -10,7 +10,6 @@ import {
   Shield, 
   Headphones, 
   CreditCard, 
-  Instagram,
   TrendingUp,
   Heart,
   ShoppingCart,

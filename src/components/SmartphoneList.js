@@ -8,7 +8,6 @@ import {
   ShoppingBag, 
   Heart, 
   Star,
-  Sparkles,
   Smartphone
 } from 'lucide-react';
 

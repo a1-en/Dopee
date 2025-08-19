@@ -13,12 +13,7 @@ import {
   Shield, 
   Truck, 
   CheckCircle,
-  Star,
-  MapPin,
-  Phone,
-  Mail,
-  User,
-  Building
+  MapPin
 } from 'lucide-react';
 
 const Checkout = () => {

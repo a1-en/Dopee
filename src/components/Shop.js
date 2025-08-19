@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useCart } from './CartContext';
 import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Separator } from './ui/separator';
 import {
   Search, 
-  Filter, 
   Grid3X3, 
   List, 
   Heart, 
@@ -17,14 +15,10 @@ import {
   SlidersHorizontal,
   X,
   ChevronDown,
-  ChevronUp,
-  Sparkles,
-  TrendingUp,
-  Award
+  ChevronUp
 } from 'lucide-react';
 
 const Shop = () => {
-  const navigate = useNavigate();
   const { cart, setCart } = useCart();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -40,25 +34,7 @@ const Shop = () => {
     fetchProducts();
   }, []);
 
-  useEffect(() => {
-    filterAndSortProducts();
-  }, [products, searchQuery, sortBy, priceRange, selectedCategories]);
-
-    const fetchProducts = async () => {
-      try {
-      setLoading(true);
-      const response = await fetch('https://dummyjson.com/products?limit=50');
-        const data = await response.json();
-        setProducts(data.products);
-      setFilteredProducts(data.products);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterAndSortProducts = () => {
+    const filterAndSortProducts = useCallback(() => {
     let filtered = [...products];
 
     // Search filter
@@ -101,6 +77,24 @@ const Shop = () => {
     }
 
     setFilteredProducts(filtered);
+  }, [products, searchQuery, sortBy, priceRange, selectedCategories]);
+
+  useEffect(() => {
+    filterAndSortProducts();
+  }, [filterAndSortProducts]);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('https://dummyjson.com/products?limit=50');
+        const data = await response.json();
+        setProducts(data.products);
+      setFilteredProducts(data.products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const addToCart = (product) => {

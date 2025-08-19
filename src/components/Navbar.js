@@ -13,13 +13,10 @@ import {
   ShoppingCart, 
   X, 
   Heart,
-  User,
   Phone,
   Mail,
   MapPin,
-  Star,
-  Plus,
-  Minus
+  Star
 } from 'lucide-react';
 
 // Debounce function
@@ -98,29 +95,8 @@ const handleAddToCart = () => {
     setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 3000);
   };
 
-  const updateCartItemQuantity = (productId, change) => {
-    setCart(prevCart => {
-      const newCart = [...prevCart];
-      const itemIndex = newCart.findIndex(item => item.id === productId);
-      
-      if (itemIndex !== -1) {
-        if (change === -1 && newCart[itemIndex].quantity <= 1) {
-          newCart.splice(itemIndex, 1);
-        } else {
-          newCart[itemIndex].quantity = (newCart[itemIndex].quantity || 1) + change;
-        }
-      }
-      
-      return newCart;
-    });
-  };
-
   const getTotalItems = () => {
     return cart.reduce((total, item) => total + (item.quantity || 1), 0);
-  };
-
-  const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + (item.price * (item.quantity || 1)), 0);
   };
 
   return (
